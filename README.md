@@ -4,11 +4,11 @@ Use this starter template to build server side apps and API's with `Express.js`
 
 ## Project Structure
 
-### `server.ts`
+### `server.js`
 
 This is the entry point where we create a node `HTTP` server and serve the application
 
-### `src/index.ts`
+### `src/index.js`
 
 This is the entry point for the application where all the app configurations and primary routing gets handled
 

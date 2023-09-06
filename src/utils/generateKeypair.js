@@ -1,7 +1,7 @@
-import * as crypto from "crypto";
-import * as fs from "fs";
-import * as path from "path";
-import { logger } from "./logger";
+const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
+const { logger } = require("./logger");
 
 function generateKeyPair() {
   const keyPair = crypto.generateKeyPairSync("rsa", {
@@ -29,4 +29,4 @@ function generateKeyPair() {
   logger.info("Keypair Generated");
 }
 
-export default generateKeyPair;
+module.exports = generateKeyPair;

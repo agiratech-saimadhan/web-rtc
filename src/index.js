@@ -1,11 +1,12 @@
-import express from "express";
-import cors from "cors";
-import path from "path";
+const express = require("express");
+const cors = require("cors");
 
-import { pino } from "./utils/logger";
+const path = require("path");
 
-import homeRouter from "./routes/index";
-import helloApiRouter from "./routes/api/hello/index";
+const { pino } = require("./utils/logger");
+
+const homeRouter = require("./routes/index");
+const helloApiRouter = require("./routes/api/hello/index");
 
 const app = express();
 
@@ -22,4 +23,4 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/home", homeRouter);
 app.use("/api", helloApiRouter);
 
-export default app;
+module.exports = app;
