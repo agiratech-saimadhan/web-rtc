@@ -1,29 +1,51 @@
+const express = require("express");
 const http = require("http");
 const dotenv = require("dotenv");
+const socketio = require("socket.io");
 const path = require("path");
-const fs = require("fs");
-
-const { logger } = require("./src/utils/logger");
-const generateKeypair = require("./src/utils/generateKeypair");
-
-const app = require("./src/index");
 
 dotenv.config();
 
+const app = express();
+
 const port = process.env.PORT || 3000;
+
+app.use(express.static(path.join(__dirname, "/public")));
 
 app.set("port", port);
 const server = http.createServer(app);
 
-server.listen(port);
+const io = socketio(server);
 
-const privKeyPath = path.join(__dirname, "./id_rsa_priv.pem");
-const pubKeyPath = path.join(__dirname, "./id_rsa_pub.pem");
+server.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});
 
-if (!fs.existsSync(privKeyPath) || !fs.existsSync(pubKeyPath)) {
-  logger.info("Key files not found, generating new keypair...");
-  generateKeypair();
-}
+io.on("connection", (socket) => {
+  socket.on("join-room", (roomId) => {
+    console.log(roomId);
+    socket.join(roomId);
+    // Broadcast to other users that a new user has joined
+    socket.to(roomId).emit("user-connected", socket.id);
+  });
+
+  socket.on("offer", (offer, roomId) => {
+    console.log({ roomId, offer });
+
+    socket.to(roomId).emit("offer", offer);
+  });
+
+  socket.on("answer", (answer, roomId) => {
+    console.log({ roomId, answer });
+
+    socket.to(roomId).emit("answer", answer);
+  });
+
+  socket.on("ice-candidate", (candidate, roomId) => {
+    console.log({ roomId, candidate });
+    socket.to(roomId).emit("ice-candidate", candidate);
+  });
+});
 
 server.on("error", (error) => {
   switch (error.name) {
@@ -36,10 +58,4 @@ server.on("error", (error) => {
     default:
       logger.error(error.message);
   }
-});
-
-server.on("listening", () => {
-  const address = server.address();
-
-  logger.info(`Server is listening on ${address.address}:${address.port}`);
 });

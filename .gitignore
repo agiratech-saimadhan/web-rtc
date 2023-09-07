@@ -159,6 +159,3 @@ dist
 # .pnp.*
 
 # End of https://www.toptal.com/developers/gitignore/api/node,yarn
-id_rsa_pub.pem
-id_rsa_priv.pem
-package-lock.json
